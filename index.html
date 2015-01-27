@@ -1,0 +1,112 @@
+<!doctype html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="./assets/css/main.css"/>
+    <link rel="stylesheet" href="./assets/css/codemirror/codemirror.css"/>
+    <link rel="stylesheet" href="./assets/css/codemirror/theme/base16-light.css"/>
+
+    <style>
+        body {
+            background-color: #f2f2f2;
+        }
+        .col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 {
+            padding-right: 1px;
+            padding-left: 0;
+        }
+
+        .col-simulation .panel {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        .col-settings .panel {
+            border-radius: 0;
+        }
+
+        .col-menu .panel {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        .col-simulation .panel, .col-settings .panel, .col-menu .panel {
+            height: 518px;
+        }
+    </style>
+
+    <title>Simulering</title>
+
+    <meta name="mobile-web-app-capable" content="yes">
+  </head>
+  <body>
+
+    <div class="container" id="app">
+        <div class="row">
+            <div class="col-sm-12">
+                <h1 class="page-title">Simulering</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-7 col-simulation">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Simulering</div>
+                    <div class="panel-body" id="canvas"></div>
+                    <div class="panel-footer">
+                        {{ time|floatformat }}
+
+                        <div class="pull-right">
+                            <button class="btn btn-xs btn-danger" v-if="time !== 0" v-on="click: reset()"><i class="fa fa-fast-backward"></i></button>
+                            <div class="btn-group" v-if="!isRunning">
+                                <button class="btn btn-xs btn-info" v-on="click: stepBackward()"><i class="fa fa-step-backward"></i></button>
+                                <button class="btn btn-xs btn-info" v-on="click: stepForward()"><i class="fa fa-step-forward"></i></button>
+                            </div>
+                            <button class="btn btn-xs" v-class="isRunning ? 'btn-danger' : 'btn-success'" v-on="click: startStop()"><i class="fa" v-class="isRunning ? 'fa-pause' : 'fa-play'"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 col-settings">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Innstillinger</div>
+                    <div class="panel-body">
+                        Innstillinger her...
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-menu">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Meny</div>
+                    <ul class="list-group menu" v-repeat="item: menu">
+                        <div class="item" v-component="menu-item" v-with="model: item"></div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Redigeringsvindu</div>
+                <textarea name="code" id="code" cols="30" rows="10"></textarea>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="./lib/vue.js"></script>
+    <script src="./lib/pixi.dev.js"></script>
+    <script src="./lib/6to5/6to5.js"></script>
+    <script src="./lib/codemirror/codemirror.js"></script>
+    <script src="./lib/codemirror/mode/javascript.js"></script>
+    <script src="./dist/app.js"></script>
+    <script>
+      app();
+    </script>
+  </body>
+</html>
