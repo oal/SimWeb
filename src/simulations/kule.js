@@ -1,5 +1,4 @@
-export var Simulation = {
-    file: 'kule.js',
+var simulation = {
     data: {},
 
     init: function() {

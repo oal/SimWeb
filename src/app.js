@@ -1,7 +1,4 @@
 import {MenuItemComponent} from './components/menu-item.js';
-import {Simulation as Example} from './simulations/example.js';
-import {Simulation as Example2} from './simulations/example2.js';
-import {Simulation as Kule} from './simulations/kule.js';
 import {Circle} from './actors/circle.js';
 import {Line} from './actors/line.js';
 
@@ -15,7 +12,7 @@ class App {
         this.setupEditor();
         this.setupUI();
 
-        this.ui.setSimulation(Example);
+        this.ui.setSimulation('example.js');
         this.lastSimTime = 0;
         this.simulate(0);
 
@@ -43,9 +40,9 @@ class App {
                     {
                         name: 'Mathematics',
                         children: [
-                            {name: 'Eksempel 1', simulation: Example},
-                            {name: 'Eksempel 2', simulation: Example2},
-                            {name: 'Kule', simulation: Kule}
+                            {name: 'Eksempel 1', file: 'example.js'},
+                            {name: 'Eksempel 2', file: 'example2.js'},
+                            {name: 'Kule', file: 'kule.js'}
                         ]
                     },
                     {
@@ -78,22 +75,23 @@ class App {
                     this.time += 0.01;
                 },
 
-                setSimulation: function(simulation) {
-                    this.simulation = simulation;
-                    this.simulation.stage = new PIXI.Stage(0xffffff);
-                    this.simulation.actors = {
-                        Circle: Circle,
-                        Line: Line
-                    };
-                    this.simulation.init();
-                    console.log('SIm set', './src/simulations/'+this.simulation.file, $.get, simulation);
-
+                setSimulation: function(file) {
                     $.ajax({
-                        url: './src/simulations/' + this.simulation.file,
+                        url: './src/simulations/' + file,
                         type: 'GET',
-                        complete: function (data) {
+                        complete: (data) => {
                             editor.getDoc().setValue(data.responseText);
                             var code = data.responseText;
+                            eval(code);
+                            console.log(simulation);
+
+                            this.simulation = simulation;
+                            this.simulation.stage = new PIXI.Stage(0xffffff);
+                            this.simulation.actors = {
+                                Circle: Circle,
+                                Line: Line
+                            };
+                            this.simulation.init();
                         }
                     });
                 }
@@ -103,6 +101,8 @@ class App {
 
     simulate(t) {
         requestAnimFrame(this.simulate.bind(this));
+        if(!this.ui.simulation) return;
+
         var dt = (t-this.lastSimTime) / 1000;
         if(this.ui.isRunning) this.ui.time += dt;
 

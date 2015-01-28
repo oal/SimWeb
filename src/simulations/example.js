@@ -1,5 +1,4 @@
-export var Simulation = {
-    file: 'example.js',
+var simulation = {
     data: {},
 
     init: function() {
