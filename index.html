@@ -23,6 +23,17 @@
             border-top-right-radius: 0;
             border-bottom-right-radius: 0;
         }
+        
+        #canvas {
+            background-color: #f9f9f9;
+        }
+
+        #canvas > canvas {
+            box-shadow: 0 0 7px rgba(0,0,0,0.1);
+            border: 1px solid #eee;
+            outline: 2px solid #fff;
+            margin-left: -1px;
+        }
 
         .col-settings .panel {
             border-radius: 0;
@@ -101,7 +112,6 @@
     <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
     <script src="./lib/vue.js"></script>
     <script src="./lib/pixi.dev.js"></script>
-    <script src="./lib/6to5/6to5.js"></script>
     <script src="./lib/codemirror/codemirror.js"></script>
     <script src="./lib/codemirror/mode/javascript.js"></script>
     <script src="./dist/app.js"></script>

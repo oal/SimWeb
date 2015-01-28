@@ -1,12 +1,15 @@
 import {MenuItemComponent} from './components/menu-item.js';
 import {Simulation as Example} from './simulations/example.js';
 import {Simulation as Example2} from './simulations/example2.js';
+import {Simulation as Kule} from './simulations/kule.js';
+import {Circle} from './actors/circle.js';
+import {Line} from './actors/line.js';
 
 class App {
     constructor() {
         var container = document.getElementById('canvas');
         var styles = window.getComputedStyle(container);
-        this.renderer = new PIXI.WebGLRenderer(container.clientWidth - parseInt(styles.paddingLeft) - parseInt(styles.paddingRight), 400);
+        this.renderer = new PIXI.autoDetectRenderer(container.clientWidth - parseInt(styles.paddingLeft) - parseInt(styles.paddingRight), 400, {antialias: true});
         container.appendChild(this.renderer.view);
 
         this.setupEditor();
@@ -15,6 +18,8 @@ class App {
         this.ui.setSimulation(Example);
         this.lastSimTime = 0;
         this.simulate(0);
+
+        console.log(new Circle());
     }
 
     addComponent(name, component) {
@@ -39,7 +44,8 @@ class App {
                         name: 'Mathematics',
                         children: [
                             {name: 'Eksempel 1', simulation: Example},
-                            {name: 'Eksempel 2', simulation: Example2}
+                            {name: 'Eksempel 2', simulation: Example2},
+                            {name: 'Kule', simulation: Kule}
                         ]
                     },
                     {
@@ -75,11 +81,15 @@ class App {
                 setSimulation: function(simulation) {
                     this.simulation = simulation;
                     this.simulation.stage = new PIXI.Stage(0xffffff);
+                    this.simulation.actors = {
+                        Circle: Circle,
+                        Line: Line
+                    };
                     this.simulation.init();
-                    console.log('SIm set', '/src/simulations/'+this.simulation.file, $.get, simulation);
+                    console.log('SIm set', './src/simulations/'+this.simulation.file, $.get, simulation);
 
                     $.ajax({
-                        url: '/src/simulations/' + this.simulation.file,
+                        url: './src/simulations/' + this.simulation.file,
                         type: 'GET',
                         complete: function (data) {
                             editor.getDoc().setValue(data.responseText);
