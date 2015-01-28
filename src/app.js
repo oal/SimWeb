@@ -12,7 +12,7 @@ class App {
         this.setupEditor();
         this.setupUI();
 
-        this.ui.setSimulation('example.js');
+        this.ui.setSimulationFromFile('example.js');
         this.lastSimTime = 0;
         this.simulate(0);
 
@@ -75,33 +75,49 @@ class App {
                     this.time += 0.01;
                 },
 
-                setSimulation: function(file) {
+                setSimulationFromFile: function(file) {
                     $.ajax({
                         url: './src/simulations/' + file,
                         type: 'GET',
                         complete: (data) => {
                             editor.getDoc().setValue(data.responseText);
-                            var code = data.responseText;
-                            eval(code);
-                            console.log(simulation);
-
-                            this.simulation = simulation;
-                            this.simulation.stage = new PIXI.Stage(0xffffff);
-                            this.simulation.actors = {
-                                Circle: Circle,
-                                Line: Line
-                            };
-                            this.simulation.init();
+                            this.setSimulationFromCode(data.responseText);
                         }
                     });
+                },
+
+                setSimulationFromCode: function(code) {
+                    eval(code);
+                    console.log('coooode', simulation);
+
+                    this.simulation = simulation;
+                    this.simulation.stage = new PIXI.Stage(0xffffff);
+                    this.simulation.actors = {
+                        Circle: Circle,
+                        Line: Line
+                    };
+                    this.simulation.init();
+                },
+
+                setSimulationFromEditor: function() {
+                    var code = editor.getDoc().getValue();
+                    console.log(code)
+                    this.setSimulationFromCode(code);
                 }
             }
         });
+
+        this.ui.$watch('simulation', function() {
+            console.log('SIm CHANGED')
+        }, true)
     }
 
     simulate(t) {
         requestAnimFrame(this.simulate.bind(this));
-        if(!this.ui.simulation) return;
+        if(!this.ui.simulation) {
+            console.log('No simulation set!')
+            return
+        };
 
         var dt = (t-this.lastSimTime) / 1000;
         if(this.ui.isRunning) this.ui.time += dt;
