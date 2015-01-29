@@ -38,7 +38,7 @@ export class MenuItemComponent extends Component {
                 if (this.isFolder) {
                     this.isOpen = !this.isOpen
                 } else {
-                    this.$root.setSimulationFromFile(this.model.file);
+                    this.$root.chooseSimulation(this.model.file);
                 }
             }
         }

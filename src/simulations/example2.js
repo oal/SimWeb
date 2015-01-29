@@ -1,7 +1,7 @@
 var simulation = {
     data: {},
 
-    init: function() {
+    init: function(stage) {
         var texture = PIXI.Texture.fromImage("./assets/img/bunny.png");
         // create a new Sprite using the texture
         this.data.bunnies = [];
@@ -14,7 +14,7 @@ var simulation = {
             bunny.position.y = 150;
 
             this.data.bunnies.push(bunny);
-            this.stage.addChild(bunny);
+            stage.addChild(bunny);
         }
     },
 

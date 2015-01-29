@@ -12,8 +12,9 @@ class App {
         this.setupEditor();
         this.setupUI();
 
-        this.ui.setSimulationFromFile('example.js');
+        this.stage = new PIXI.Stage(0xcccccc);
         this.lastSimTime = 0;
+        this.setSimulationFromFile('example.js');
         this.simulate(0);
 
         console.log(new Circle());
@@ -31,8 +32,6 @@ class App {
             return value.toFixed(2);
         });
 
-        var renderer = this.renderer;
-        var editor = this.editor;
         this.ui = new Vue({
             el: '#app',
             data: {
@@ -53,7 +52,7 @@ class App {
                 ],
                 isRunning: false,
                 time: 0.0,
-                simulation: null
+                simulation: ''
             },
             methods: {
                 startStop: function() {
@@ -75,49 +74,62 @@ class App {
                     this.time += 0.01;
                 },
 
-                setSimulationFromFile: function(file) {
-                    $.ajax({
-                        url: './src/simulations/' + file,
-                        type: 'GET',
-                        complete: (data) => {
-                            editor.getDoc().setValue(data.responseText);
-                            this.setSimulationFromCode(data.responseText);
-                        }
-                    });
+                chooseSimulation: (file) => {
+                    this.setSimulationFromFile(file);
                 },
 
-                setSimulationFromCode: function(code) {
-                    eval(code);
-                    console.log('coooode', simulation);
+                updateSimulation: _ => {
+                    this.setSimulationFromEditor()
+                }
 
-                    this.simulation = simulation;
-                    this.simulation.stage = new PIXI.Stage(0xffffff);
-                    this.simulation.actors = {
-                        Circle: Circle,
-                        Line: Line
-                    };
-                    this.simulation.init();
-                },
-
-                setSimulationFromEditor: function() {
-                    var code = editor.getDoc().getValue();
-                    console.log(code)
-                    this.setSimulationFromCode(code);
+            },
+            watch: {
+                simulation: _ => {
+                    console.log('Sim changed')
                 }
             }
         });
+    }
 
-        this.ui.$watch('simulation', function() {
-            console.log('SIm CHANGED')
-        }, true)
+    setSimulationFromFile(file) {
+        $.ajax({
+            url: './src/simulations/' + file,
+            type: 'GET',
+            complete: (data) => {
+                this.editor.getDoc().setValue(data.responseText);
+                this.setSimulationFromCode(data.responseText);
+                this.ui.simulation = file;
+            }
+        });
+    }
+
+    setSimulationFromCode(code) {
+        console.log(code);
+        eval(code);
+        console.log('coooode', simulation);
+
+        this.sim = simulation;
+        this.stage = new PIXI.Stage(0xffffff*Math.random());
+        this.sim.actors = {
+            Circle: Circle,
+            Line: Line
+        };
+        this.sim.init(this.stage);
+    }
+
+    setSimulationFromEditor() {
+        var code = this.editor.getDoc().getValue();
+        console.log(code)
+        this.setSimulationFromCode(code);
+        this.ui.simulation = Math.random();
     }
 
     simulate(t) {
         requestAnimFrame(this.simulate.bind(this));
         if(!this.ui.simulation) {
-            console.log('No simulation set!')
+            console.log('No simulation set!');
             return
-        };
+        }
 
         var dt = (t-this.lastSimTime) / 1000;
         if(this.ui.isRunning) this.ui.time += dt;
@@ -127,9 +139,8 @@ class App {
     }
 
     update() {
-        this.ui.simulation.update(this.ui.time);
-        this.renderer.render(this.ui.simulation.stage);
-        //console.log(this.ui.simulation)
+        this.sim.update(this.ui.time);
+        this.renderer.render(this.stage);
     }
 
     setupEditor() {
